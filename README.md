@@ -1,8 +1,8 @@
 # Learning Journal
 
-> A local-first learning task board and daily learning journal. Plan what you want to learn, complete it, then turn it into searchable notes with time tracking, tags, categories, heatmaps, and stats.
+English | [简体中文](./README.zh-CN.md)
 
-一个本地优先的个人学习管理工具：先把“我要学什么”写成待办，完成后再补充笔记、用时和资料链接，自动沉淀为正式学习记录。
+> A local-first learning task board and daily learning journal. Plan what you want to learn, complete it, then turn it into searchable notes with time tracking, tags, categories, heatmaps, and stats.
 
 ![React](https://img.shields.io/badge/React-18-61dafb?logo=react&logoColor=111)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=fff)
@@ -19,43 +19,41 @@ Most learning trackers ask you to write what you already learned. In real life, 
 2. I finish it later.
 3. I record what I actually learned, how long it took, and where the source was.
 
-Learning Journal follows that workflow.
-
-大多数学习日志都是“事后记录”，但真实学习流程通常是：先有计划，再去完成，最后沉淀笔记。这个项目就是为这种个人学习闭环设计的。
+Learning Journal follows that workflow. It helps you turn learning intentions into completed notes, searchable history, and visible progress.
 
 ## Features
 
-- **Learning Tasks / 学习待办**  
+- **Learning Tasks**  
   Add what you plan to learn with category and tags. When done, complete it with notes, duration, and source URL.
 
-- **Journal Entries / 学习记录**  
+- **Journal Entries**  
   Completed tasks become searchable learning entries with markdown notes.
 
-- **Dashboard / 仪表盘**  
+- **Dashboard**  
   Weekly/monthly/all-time learning stats, streak counter, recent entries, tag cloud, category chart, and heatmap.
 
-- **Interactive Heatmap / 学习热力图**  
+- **Interactive Heatmap**  
   Hover a day to see the date, total minutes, and what you learned that day.
 
-- **Timeline / 时间线**  
+- **Timeline**  
   Browse learning entries grouped by date.
 
-- **Search / 搜索**  
+- **Search**  
   Search by keyword, category, tag, and date range.
 
-- **Category & Tag Management / 分类与标签管理**  
+- **Category & Tag Management**  
   Create, rename, delete categories and tags. Categories support custom colors.
 
-- **Local-first / 本地优先**  
+- **Local-first**  
   Runs on your own machine. No cloud, no login, no tracking.
 
-- **Dark Mode / 深色模式**  
+- **Dark Mode**  
   System-aware theme with manual toggle.
 
-- **Chinese & English UI / 中英文切换**  
-  Built-in language switcher.
+- **Language Switcher**  
+  Built-in Chinese and English UI.
 
-- **One-click Start / 一键启动**  
+- **One-click Start**  
   Windows `.vbs` scripts can start and stop the dev server silently.
 
 ## Tech Stack
@@ -83,8 +81,6 @@ The SQLite database is created automatically at:
 ```text
 server/data/learning-journal.sqlite
 ```
-
-数据库会在首次启动时自动创建。学习数据只保存在你自己的电脑里。
 
 ## Windows One-click Launch
 
