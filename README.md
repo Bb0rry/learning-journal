@@ -1,31 +1,153 @@
 # Learning Journal
 
-A local full-stack daily learning tracker built with React, Vite, TypeScript, Tailwind CSS, Express, and SQLite.
+> A local-first learning task board and daily learning journal. Plan what you want to learn, complete it, then turn it into searchable notes with time tracking, tags, categories, heatmaps, and stats.
 
-## Run Locally
+一个本地优先的个人学习管理工具：先把“我要学什么”写成待办，完成后再补充笔记、用时和资料链接，自动沉淀为正式学习记录。
+
+![React](https://img.shields.io/badge/React-18-61dafb?logo=react&logoColor=111)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=fff)
+![Vite](https://img.shields.io/badge/Vite-6-646cff?logo=vite&logoColor=fff)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38bdf8?logo=tailwindcss&logoColor=fff)
+![Express](https://img.shields.io/badge/Express-API-111827?logo=express&logoColor=fff)
+![SQLite](https://img.shields.io/badge/SQLite-local-003b57?logo=sqlite&logoColor=fff)
+
+## Why
+
+Most learning trackers ask you to write what you already learned. In real life, learning usually starts as a plan:
+
+1. I want to learn something.
+2. I finish it later.
+3. I record what I actually learned, how long it took, and where the source was.
+
+Learning Journal follows that workflow.
+
+大多数学习日志都是“事后记录”，但真实学习流程通常是：先有计划，再去完成，最后沉淀笔记。这个项目就是为这种个人学习闭环设计的。
+
+## Features
+
+- **Learning Tasks / 学习待办**  
+  Add what you plan to learn with category and tags. When done, complete it with notes, duration, and source URL.
+
+- **Journal Entries / 学习记录**  
+  Completed tasks become searchable learning entries with markdown notes.
+
+- **Dashboard / 仪表盘**  
+  Weekly/monthly/all-time learning stats, streak counter, recent entries, tag cloud, category chart, and heatmap.
+
+- **Interactive Heatmap / 学习热力图**  
+  Hover a day to see the date, total minutes, and what you learned that day.
+
+- **Timeline / 时间线**  
+  Browse learning entries grouped by date.
+
+- **Search / 搜索**  
+  Search by keyword, category, tag, and date range.
+
+- **Category & Tag Management / 分类与标签管理**  
+  Create, rename, delete categories and tags. Categories support custom colors.
+
+- **Local-first / 本地优先**  
+  Runs on your own machine. No cloud, no login, no tracking.
+
+- **Dark Mode / 深色模式**  
+  System-aware theme with manual toggle.
+
+- **Chinese & English UI / 中英文切换**  
+  Built-in language switcher.
+
+- **One-click Start / 一键启动**  
+  Windows `.vbs` scripts can start and stop the dev server silently.
+
+## Tech Stack
+
+- Frontend: React 18, Vite, TypeScript, Tailwind CSS
+- Backend: Node.js, Express, TypeScript
+- Database: SQLite via `better-sqlite3`
+- State/data: TanStack Query
+- UI: custom shadcn-style components, Lucide icons, Recharts, Framer Motion
+
+## Quick Start
 
 ```bash
 npm install
 npm run dev
 ```
 
-Client: http://localhost:5173  
-API: http://localhost:3001
+Open:
 
-The SQLite database is created automatically at `server/data/learning-journal.sqlite` and seeded with sample entries on first start.
+- Client: http://localhost:5173
+- API: http://localhost:3001
+
+The SQLite database is created automatically at:
+
+```text
+server/data/learning-journal.sqlite
+```
+
+数据库会在首次启动时自动创建。学习数据只保存在你自己的电脑里。
+
+## Windows One-click Launch
+
+From the project parent folder:
+
+```text
+Start Learning Journal Silent.vbs
+Stop Learning Journal Silent.vbs
+```
+
+Inside the project folder:
+
+```text
+start-learning-journal-silent.vbs
+stop-learning-journal-silent.vbs
+```
+
+The silent start script runs `npm run dev` in the background and opens:
+
+```text
+http://127.0.0.1:5173/
+```
+
+## Workflow
+
+```mermaid
+flowchart LR
+  A["Add learning task"] --> B["Complete task"]
+  B --> C["Write notes, duration, source"]
+  C --> D["Create journal entry"]
+  D --> E["Stats, timeline, search, heatmap"]
+```
 
 ## Scripts
 
 ```bash
-npm run dev
-npm run build
-npm run typecheck
-npm run start
+npm run dev        # Start client and server
+npm run build      # Build server and client
+npm run typecheck  # Run TypeScript checks
+npm run start      # Start built server
 ```
+
+## Project Structure
+
+```text
+learning-journal/
+├── client/                 # React + Vite frontend
+├── server/                 # Express + SQLite backend
+│   └── data/               # Local SQLite database, ignored by git
+├── package.json            # Workspace scripts
+└── README.md
+```
+
+## Database Tables
+
+- `tasks` - learning todos before they become records
+- `entries` - completed learning journal entries
+- `categories` - category names and colors
+- `tags` - reusable tag names
 
 ## API
 
-All responses use:
+All responses use a consistent shape:
 
 ```json
 { "success": true, "data": {} }
@@ -37,7 +159,7 @@ or:
 { "success": false, "error": "Message" }
 ```
 
-Implemented endpoints:
+### Entries
 
 - `GET /api/entries`
 - `GET /api/entries/:id`
@@ -45,6 +167,53 @@ Implemented endpoints:
 - `PUT /api/entries/:id`
 - `DELETE /api/entries/:id`
 - `GET /api/entries/dates`
+
+### Tasks
+
+- `GET /api/tasks`
+- `POST /api/tasks`
+- `PUT /api/tasks/:id`
+- `PUT /api/tasks/:id/status`
+- `POST /api/tasks/:id/complete`
+- `DELETE /api/tasks/:id`
+
+### Stats
+
 - `GET /api/stats`
+
+### Categories
+
 - `GET /api/categories`
+- `POST /api/categories`
+- `PUT /api/categories/:name`
+- `DELETE /api/categories/:name`
+
+### Tags
+
 - `GET /api/tags`
+- `POST /api/tags`
+- `PUT /api/tags/:name`
+- `DELETE /api/tags/:name`
+
+## Privacy
+
+This app is designed for personal use:
+
+- No cloud dependency
+- No account system
+- No telemetry
+- SQLite database stays local
+- `server/data/*.sqlite` is ignored by git
+
+## Roadmap
+
+- Export entries to Markdown
+- Import/export backup file
+- Calendar view
+- Pomodoro-style timer for active learning tasks
+- GitHub-style yearly heatmap
+- More chart filters
+
+## License
+
+MIT
