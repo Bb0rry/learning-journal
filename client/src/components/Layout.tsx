@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { BookOpen, CalendarDays, Folder, Home, ListChecks, Plus, Search, Tags } from "lucide-react";
+import { BookOpen, CalendarDays, FilePenLine, Folder, Home, ListChecks, Plus, Search, Tags } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useLanguage } from "../lib/i18n";
@@ -10,6 +10,7 @@ import { Button } from "./ui/button";
 const nav = [
   { to: "/", labelKey: "navDashboard", icon: Home },
   { to: "/plan", labelKey: "navPlan", icon: ListChecks },
+  { to: "/daily-summary", labelKey: "navDailySummary", icon: FilePenLine },
   { to: "/timeline", labelKey: "navTimeline", icon: CalendarDays },
   { to: "/search", labelKey: "navSearch", icon: Search },
   { to: "/categories", labelKey: "navCategories", icon: Folder },
@@ -100,7 +101,7 @@ export function Layout() {
             </motion.div>
           </AnimatePresence>
         </main>
-        <nav className="fixed inset-x-3 bottom-3 z-30 grid grid-cols-6 rounded-2xl border border-white/40 bg-white/85 p-2 shadow-lg backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/90 lg:hidden">
+        <nav className="fixed inset-x-3 bottom-3 z-30 grid grid-cols-7 rounded-2xl border border-white/40 bg-white/85 p-2 shadow-lg backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/90 lg:hidden">
           {nav.map((item) => (
             <NavLink
               key={item.to}

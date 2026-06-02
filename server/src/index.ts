@@ -4,6 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import { migrate } from "./db.js";
 import { categoriesRouter } from "./routes/categories.js";
+import { dailySummariesRouter } from "./routes/dailySummaries.js";
 import { entriesRouter } from "./routes/entries.js";
 import { statsRouter } from "./routes/stats.js";
 import { tasksRouter } from "./routes/tasks.js";
@@ -22,6 +23,7 @@ app.use(morgan("dev"));
 app.get("/api/health", (_req, res) => res.json({ success: true, data: { status: "ok" } }));
 app.use("/api/entries", entriesRouter);
 app.use("/api/tasks", tasksRouter);
+app.use("/api/daily-summaries", dailySummariesRouter);
 app.use("/api/stats", statsRouter);
 app.use("/api", categoriesRouter);
 

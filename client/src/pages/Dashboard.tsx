@@ -1,11 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
+import { addMonths, format, parse } from "date-fns";
 import { Clock, Flame, Library, Timer } from "lucide-react";
+import { useState } from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { EntryCard } from "../components/EntryCard";
 import { Heatmap } from "../components/Heatmap";
 import { Skeleton } from "../components/ui/skeleton";
 import { StatsCard } from "../components/StatsCard";
 import { TagCloud } from "../components/TagCloud";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
 import { api } from "../lib/api";
 import { useLanguage } from "../lib/i18n";
 import { minutesToLabel } from "../lib/utils";
@@ -15,8 +19,10 @@ const chartColors = ["#34d399", "#a78bfa", "#fbbf24", "#fb7185", "#38bdf8", "#94
 
 export function Dashboard() {
   const { t } = useLanguage();
-  const stats = useStats();
+  const [heatmapMonth, setHeatmapMonth] = useState(format(new Date(), "yyyy-MM"));
+  const stats = useStats(heatmapMonth);
   const recent = useQuery({ queryKey: ["entries", "recent"], queryFn: () => api.entries({ page: 1, limit: 5 }) });
+  const parsedHeatmapMonth = parse(heatmapMonth, "yyyy-MM", new Date());
 
   if (stats.isLoading || recent.isLoading) {
     return <DashboardSkeleton />;
@@ -48,13 +54,29 @@ export function Dashboard() {
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-        <Heatmap data={stats.data.heatmap} />
+        <div className="space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex gap-2">
+              <Button variant="secondary" size="sm" onClick={() => setHeatmapMonth(format(addMonths(parsedHeatmapMonth, -1), "yyyy-MM"))}>
+                {t("previousMonth")}
+              </Button>
+              <Button variant="secondary" size="sm" onClick={() => setHeatmapMonth(format(new Date(), "yyyy-MM"))}>
+                {t("currentMonth")}
+              </Button>
+              <Button variant="secondary" size="sm" onClick={() => setHeatmapMonth(format(addMonths(parsedHeatmapMonth, 1), "yyyy-MM"))}>
+                {t("nextMonth")}
+              </Button>
+            </div>
+            <Input className="w-40" type="month" value={heatmapMonth} onChange={(event) => setHeatmapMonth(event.target.value)} />
+          </div>
+          <Heatmap data={stats.data.heatmap} monthLabel={format(parsedHeatmapMonth, "MMMM yyyy")} />
+        </div>
         <div className="glass rounded-xl p-5">
           <h2 className="mb-4 font-semibold text-slate-950 dark:text-white">{t("categoryMix")}</h2>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={stats.data.categoryBreakdown} dataKey="value" nameKey="name" innerRadius={58} outerRadius={86} paddingAngle={4}>
+                <Pie data={stats.data.categoryBreakdown} dataKey="value" nameKey="name" innerRadius={58} outerRadius={86} paddingAngle={0} stroke="none">
                   {stats.data.categoryBreakdown.map((_, index) => (
                     <Cell key={index} fill={chartColors[index % chartColors.length]} />
                   ))}

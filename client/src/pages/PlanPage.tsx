@@ -170,6 +170,7 @@ function TaskCard({ task, onComplete, onDelete }: { task: LearningTask; onComple
 
 function CompleteDialog({ task, onClose, onDone }: { task: LearningTask; onClose: () => void; onDone: () => void }) {
   const { t } = useLanguage();
+  const [learnedAt, setLearnedAt] = useState(new Date().toISOString().slice(0, 10));
   const [content, setContent] = useState("");
   const [hours, setHours] = useState("0");
   const [minutes, setMinutes] = useState("45");
@@ -182,7 +183,8 @@ function CompleteDialog({ task, onClose, onDone }: { task: LearningTask; onClose
         duration_minutes: Number(hours || 0) * 60 + Number(minutes || 0),
         category: task.category,
         tags: task.tags,
-        source_url: sourceUrl.trim()
+        source_url: sourceUrl.trim(),
+        learned_at: learnedAt
       }),
     onSuccess: () => {
       toast.success(t("taskCompletedToast"));
@@ -208,6 +210,10 @@ function CompleteDialog({ task, onClose, onDone }: { task: LearningTask; onClose
         <h2 className="text-xl font-extrabold text-slate-950 dark:text-white">{t("completeTask")}</h2>
         <p className="mt-1 text-sm font-semibold text-slate-500 dark:text-slate-400">{task.title}</p>
         <div className="mt-5 space-y-4">
+          <div>
+            <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">{t("learnedDate")}</label>
+            <Input className="mt-2" type="date" value={learnedAt} onChange={(event) => setLearnedAt(event.target.value)} />
+          </div>
           <div>
             <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">{t("whatLearned")}</label>
             <Textarea className="mt-2 min-h-40" value={content} onChange={(event) => setContent(event.target.value)} placeholder={t("completionNotesPlaceholder")} />

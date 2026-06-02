@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { db, mapEntry, mapTask, type EntryRow, type TaskRow } from "../db.js";
-import { fail, normalizeTags, ok } from "../utils.js";
+import { fail, normalizeTags, ok, resolveLearnedAt } from "../utils.js";
 
 export const tasksRouter = Router();
 
@@ -14,11 +14,13 @@ const taskSchema = z.object({
 });
 
 const completeSchema = z.object({
+  summary: z.string().trim().optional().default(""),
   content: z.string().trim().min(1, "Notes are required"),
   duration_minutes: z.number().int().min(0),
   category: z.string().trim().optional(),
   tags: z.array(z.string()).optional(),
-  source_url: z.string().trim().url().optional().or(z.literal(""))
+  source_url: z.string().trim().url().optional().or(z.literal("")),
+  learned_at: z.string().trim().optional().default("")
 });
 
 function syncMetadata(category: string, tags: string[], now: string) {
@@ -123,23 +125,25 @@ tasksRouter.post("/:id/complete", (req, res) => {
       if (!task) throw new Error("Task not found");
       if (task.status === "completed") throw new Error("Task already completed");
       const now = new Date().toISOString();
+      const learnedAt = resolveLearnedAt(parsed.data.learned_at);
       const category = parsed.data.category || task.category || "Other";
       const tags = parsed.data.tags ?? (task.tags ? JSON.parse(task.tags) : []);
       const sourceUrl = parsed.data.source_url ?? task.source_url ?? "";
       const entryResult = db.prepare(`
-        INSERT INTO entries (title, content, category, tags, duration_minutes, source_url, created_at, updated_at)
-        VALUES (@title, @content, @category, @tags, @duration_minutes, @source_url, @created_at, @updated_at)
+        INSERT INTO entries (title, summary, content, category, tags, duration_minutes, source_url, created_at, updated_at)
+        VALUES (@title, @summary, @content, @category, @tags, @duration_minutes, @source_url, @created_at, @updated_at)
       `).run({
         title: task.title,
+        summary: parsed.data.summary,
         content: parsed.data.content,
         category,
         tags: normalizeTags(tags),
         duration_minutes: parsed.data.duration_minutes,
         source_url: sourceUrl,
-        created_at: now,
+        created_at: learnedAt,
         updated_at: now
       });
-      db.prepare("UPDATE tasks SET status = 'completed', completed_at = ?, entry_id = ?, updated_at = ? WHERE id = ?").run(now, entryResult.lastInsertRowid, now, task.id);
+      db.prepare("UPDATE tasks SET status = 'completed', completed_at = ?, entry_id = ?, updated_at = ? WHERE id = ?").run(learnedAt, entryResult.lastInsertRowid, now, task.id);
       syncMetadata(category, tags, now);
       const updatedTask = db.prepare("SELECT * FROM tasks WHERE id = ?").get(task.id) as TaskRow;
       const entry = db.prepare("SELECT * FROM entries WHERE id = ?").get(entryResult.lastInsertRowid) as EntryRow;

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { differenceInCalendarDays, format, startOfDay, subDays } from "date-fns";
+import { addDays, differenceInCalendarDays, format, isValid, parse, startOfDay, subDays } from "date-fns";
 import { db } from "../db.js";
 import { fail, ok, parseJsonArray } from "../utils.js";
 
@@ -21,8 +21,22 @@ function currentStreak(dates: string[]) {
   return streak;
 }
 
-statsRouter.get("/", (_req, res) => {
+function resolveMonth(value: unknown) {
+  const raw = typeof value === "string" ? value : "";
+  const parsed = raw ? parse(raw, "yyyy-MM", new Date()) : new Date();
+  const date = isValid(parsed) ? parsed : new Date();
+  return {
+    month: format(date, "yyyy-MM"),
+    start: `${format(date, "yyyy-MM")}-01`
+  };
+}
+
+statsRouter.get("/", (req, res) => {
   try {
+    const selectedMonth = resolveMonth(req.query.month);
+    const monthStart = new Date(`${selectedMonth.start}T00:00:00.000Z`);
+    const nextMonth = new Date(Date.UTC(monthStart.getUTCFullYear(), monthStart.getUTCMonth() + 1, 1));
+    const daysInMonth = differenceInCalendarDays(nextMonth, monthStart);
     const summary = db.prepare(`
       SELECT
         COUNT(*) as totalEntries,
@@ -55,10 +69,11 @@ statsRouter.get("/", (_req, res) => {
       .prepare(`
         SELECT id, title, category, duration_minutes, substr(created_at, 1, 10) as date
         FROM entries
-        WHERE date(created_at) >= date('now', '-34 days')
+        WHERE date(created_at) >= date(@monthStart)
+          AND date(created_at) < date(@nextMonth)
         ORDER BY created_at DESC
       `)
-      .all() as { id: number; title: string; category: string | null; duration_minutes: number | null; date: string }[];
+      .all({ monthStart: selectedMonth.start, nextMonth: format(nextMonth, "yyyy-MM-dd") }) as { id: number; title: string; category: string | null; duration_minutes: number | null; date: string }[];
     const entriesByDate = heatmapEntryRows.reduce<Record<string, { id: number; title: string; category: string; duration_minutes: number }[]>>(
       (acc, entry) => {
         acc[entry.date] = [
@@ -74,8 +89,8 @@ statsRouter.get("/", (_req, res) => {
       },
       {}
     );
-    const heatmap = Array.from({ length: 35 }, (_, index) => {
-      const date = format(subDays(new Date(), 34 - index), "yyyy-MM-dd");
+    const heatmap = Array.from({ length: daysInMonth }, (_, index) => {
+      const date = format(addDays(monthStart, index), "yyyy-MM-dd");
       return {
         date,
         count: dateMap.get(date)?.count ?? 0,
@@ -90,6 +105,7 @@ statsRouter.get("/", (_req, res) => {
 
     ok(res, {
       ...summary,
+      heatmapMonth: selectedMonth.month,
       currentStreak: currentStreak(activeDates),
       categoryBreakdown: categoryBreakdown.map((item) => ({ name: item.name ?? "Other", value: item.value })),
       tagCloud: Array.from(tagCounts.entries())

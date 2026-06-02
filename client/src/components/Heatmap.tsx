@@ -4,14 +4,14 @@ import { useLanguage } from "../lib/i18n";
 import { cn } from "../lib/utils";
 import type { Stats } from "../types";
 
-export function Heatmap({ data }: { data: Stats["heatmap"] }) {
+export function Heatmap({ data, monthLabel }: { data: Stats["heatmap"]; monthLabel: string }) {
   const { t } = useLanguage();
   const max = Math.max(1, ...data.map((item) => item.minutes));
   return (
     <div className="glass rounded-xl p-5">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="font-semibold text-slate-950 dark:text-white">{t("heatmapTitle")}</h2>
-        <span className="text-xs text-slate-500 dark:text-slate-400">{t("heatmapRange")}</span>
+        <span className="text-xs text-slate-500 dark:text-slate-400">{monthLabel}</span>
       </div>
       <div className="grid grid-cols-7 gap-2">
         {data.map((item) => {

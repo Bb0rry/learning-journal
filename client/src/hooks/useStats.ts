@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
 
-export function useStats() {
+export function useStats(month?: string) {
   return useQuery({
-    queryKey: ["stats"],
-    queryFn: api.stats
+    queryKey: ["stats", month],
+    queryFn: () => api.stats(month)
   });
 }

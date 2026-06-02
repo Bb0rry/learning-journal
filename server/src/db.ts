@@ -16,6 +16,7 @@ db.pragma("foreign_keys = ON");
 export type EntryRow = {
   id: number;
   title: string;
+  summary: string | null;
   content: string;
   category: string | null;
   tags: string | null;
@@ -36,6 +37,14 @@ export type TaskRow = {
   planned_at: string;
   completed_at: string | null;
   entry_id: number | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type DailySummaryRow = {
+  id: number;
+  date: string;
+  content: string;
   created_at: string;
   updated_at: string;
 };
@@ -66,6 +75,7 @@ export function migrate() {
     CREATE TABLE IF NOT EXISTS entries (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT NOT NULL,
+      summary TEXT,
       content TEXT NOT NULL,
       category TEXT,
       tags TEXT,
@@ -109,11 +119,25 @@ export function migrate() {
 
     CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
     CREATE INDEX IF NOT EXISTS idx_tasks_planned_at ON tasks(planned_at DESC);
+
+    CREATE TABLE IF NOT EXISTS daily_summaries (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      date TEXT NOT NULL UNIQUE,
+      content TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_daily_summaries_date ON daily_summaries(date DESC);
   `);
 
   const categoryColumns = db.prepare("PRAGMA table_info(categories)").all() as { name: string }[];
   if (!categoryColumns.some((column) => column.name === "color")) {
     db.prepare("ALTER TABLE categories ADD COLUMN color TEXT NOT NULL DEFAULT '#94a3b8'").run();
+  }
+  const entryColumns = db.prepare("PRAGMA table_info(entries)").all() as { name: string }[];
+  if (!entryColumns.some((column) => column.name === "summary")) {
+    db.prepare("ALTER TABLE entries ADD COLUMN summary TEXT").run();
   }
 
   const cleanupSamples = db.transaction(() => {
@@ -162,6 +186,7 @@ export function syncMetadataFromEntries() {
 export function mapEntry(row: EntryRow) {
   return {
     ...row,
+    summary: row.summary ?? "",
     category: row.category ?? "Other",
     tags: row.tags ? JSON.parse(row.tags) : [],
     duration_minutes: row.duration_minutes ?? 0,
@@ -178,5 +203,11 @@ export function mapTask(row: TaskRow) {
     source_url: row.source_url ?? "",
     completed_at: row.completed_at ?? "",
     entry_id: row.entry_id ?? null
+  };
+}
+
+export function mapDailySummary(row: DailySummaryRow) {
+  return {
+    ...row
   };
 }

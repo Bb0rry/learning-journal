@@ -43,6 +43,11 @@ export function EntryDetail() {
       <header className="glass rounded-xl p-6">
         <p className="text-sm font-semibold text-emerald-500">{t("entries")} / {entry.data.category}</p>
         <h1 className="mt-2 text-4xl font-extrabold text-slate-950 dark:text-white">{entry.data.title}</h1>
+        {entry.data.summary && (
+          <p className="mt-3 rounded-xl bg-emerald-400/10 px-4 py-3 text-sm font-semibold text-emerald-700 dark:text-emerald-200">
+            {entry.data.summary}
+          </p>
+        )}
         <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
           <span>{format(new Date(entry.data.created_at), "MMMM d, yyyy 'at' h:mm a")}</span>
           <span className="inline-flex items-center gap-1"><Clock size={15} /> {minutesToLabel(entry.data.duration_minutes)}</span>

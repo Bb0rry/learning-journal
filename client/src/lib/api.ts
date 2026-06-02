@@ -1,4 +1,4 @@
-import type { CompleteTaskInput, CountedCategory, CountedTag, Entry, EntryInput, EntryList, LearningTask, Stats, TaskInput } from "../types";
+import type { CompleteTaskInput, CountedCategory, CountedTag, DailySummary, Entry, EntryInput, EntryList, LearningTask, Stats, TaskInput } from "../types";
 
 type ApiResponse<T> = { success: true; data: T } | { success: false; error: string };
 
@@ -54,8 +54,20 @@ export const api = {
   deleteTask(id: string | number) {
     return request<{ id: number }>(`/api/tasks/${id}`, { method: "DELETE" });
   },
-  stats() {
-    return request<Stats>("/api/stats");
+  dailySummaries(limit = 30) {
+    return request<DailySummary[]>(`/api/daily-summaries?limit=${limit}`);
+  },
+  dailySummary(date: string) {
+    return request<DailySummary | null>(`/api/daily-summaries/${date}`);
+  },
+  saveDailySummary(date: string, content: string) {
+    return request<DailySummary>(`/api/daily-summaries/${date}`, { method: "PUT", body: JSON.stringify({ content }) });
+  },
+  deleteDailySummary(date: string) {
+    return request<{ date: string }>(`/api/daily-summaries/${date}`, { method: "DELETE" });
+  },
+  stats(month?: string) {
+    return request<Stats>(month ? `/api/stats?month=${encodeURIComponent(month)}` : "/api/stats");
   },
   categories() {
     return request<CountedCategory[]>("/api/categories");

@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { Categories } from "./pages/Categories";
 import { Dashboard } from "./pages/Dashboard";
+import { DailySummaryPage } from "./pages/DailySummaryPage";
 import { EditEntry } from "./pages/EditEntry";
 import { EntryDetail } from "./pages/EntryDetail";
 import { NewEntry } from "./pages/NewEntry";
@@ -16,8 +17,9 @@ export function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Dashboard />} />
-        <Route path="timeline" element={<TimelinePage />} />
         <Route path="plan" element={<PlanPage />} />
+        <Route path="daily-summary" element={<DailySummaryPage />} />
+        <Route path="timeline" element={<TimelinePage />} />
         <Route path="search" element={<SearchPage />} />
         <Route path="entry/new" element={<NewEntry />} />
         <Route path="entry/:id" element={<EntryDetail />} />

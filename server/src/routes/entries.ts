@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db, mapEntry, type EntryRow } from "../db.js";
-import { entryInputSchema, fail, normalizeTags, ok, parseJsonArray, toInt } from "../utils.js";
+import { entryInputSchema, fail, normalizeTags, ok, resolveLearnedAt, toInt } from "../utils.js";
 
 export const entriesRouter = Router();
 
@@ -25,7 +25,7 @@ entriesRouter.get("/", (req, res) => {
     const params: Record<string, unknown> = {};
 
     if (req.query.search) {
-      clauses.push("(title LIKE @search OR content LIKE @search)");
+      clauses.push("(title LIKE @search OR summary LIKE @search OR content LIKE @search)");
       params.search = `%${String(req.query.search)}%`;
     }
     if (req.query.category) {
@@ -88,17 +88,18 @@ entriesRouter.post("/", (req, res) => {
 
   try {
     const now = new Date().toISOString();
+    const learnedAt = resolveLearnedAt(parsed.data.learned_at);
     const result = db
       .prepare(`
-        INSERT INTO entries (title, content, category, tags, duration_minutes, source_url, created_at, updated_at)
-        VALUES (@title, @content, @category, @tags, @duration_minutes, @source_url, @created_at, @updated_at)
+        INSERT INTO entries (title, summary, content, category, tags, duration_minutes, source_url, created_at, updated_at)
+        VALUES (@title, @summary, @content, @category, @tags, @duration_minutes, @source_url, @created_at, @updated_at)
       `)
       .run({
         ...parsed.data,
         category: parsed.data.category || "Other",
         tags: normalizeTags(parsed.data.tags),
         source_url: parsed.data.source_url || "",
-        created_at: now,
+        created_at: learnedAt,
         updated_at: now
       });
     db.prepare("INSERT OR IGNORE INTO categories (name, color, created_at) VALUES (?, '#94a3b8', ?)").run(parsed.data.category || "Other", now);
@@ -119,14 +120,17 @@ entriesRouter.put("/:id", (req, res) => {
     if (!existing) return fail(res, "Entry not found", 404);
 
     const now = new Date().toISOString();
+    const learnedAt = resolveLearnedAt(parsed.data.learned_at);
     db.prepare(`
       UPDATE entries
       SET title = @title,
+          summary = @summary,
           content = @content,
           category = @category,
           tags = @tags,
           duration_minutes = @duration_minutes,
           source_url = @source_url,
+          created_at = @created_at,
           updated_at = @updated_at
       WHERE id = @id
     `).run({
@@ -135,6 +139,7 @@ entriesRouter.put("/:id", (req, res) => {
       category: parsed.data.category || "Other",
       tags: normalizeTags(parsed.data.tags),
       source_url: parsed.data.source_url || "",
+      created_at: learnedAt,
       updated_at: now
     });
     db.prepare("INSERT OR IGNORE INTO categories (name, color, created_at) VALUES (?, '#94a3b8', ?)").run(parsed.data.category || "Other", now);

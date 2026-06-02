@@ -1,6 +1,7 @@
 export type Entry = {
   id: number;
   title: string;
+  summary: string;
   content: string;
   category: string;
   tags: string[];
@@ -12,11 +13,13 @@ export type Entry = {
 
 export type EntryInput = {
   title: string;
+  summary: string;
   content: string;
   category: string;
   tags: string[];
   duration_minutes: number;
   source_url: string;
+  learned_at: string;
 };
 
 export type EntryList = {
@@ -56,6 +59,15 @@ export type CompleteTaskInput = {
   category?: string;
   tags?: string[];
   source_url?: string;
+  learned_at: string;
+};
+
+export type DailySummary = {
+  id: number;
+  date: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
 };
 
 export type Stats = {
@@ -63,6 +75,7 @@ export type Stats = {
   totalMinutes: number;
   weekMinutes: number;
   monthMinutes: number;
+  heatmapMonth: string;
   currentStreak: number;
   categoryBreakdown: { name: string; value: number }[];
   tagCloud: { tag: string; count: number }[];

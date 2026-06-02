@@ -33,7 +33,7 @@ export function EntryCard({ entry, compact = false, titleOverride }: { entry: En
           {minutesToLabel(entry.duration_minutes)}
         </span>
       </div>
-      {!compact && <p className="mt-3 line-clamp-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{entry.content.replace(/[#*_`>-]/g, "")}</p>}
+      {!compact && <p className="mt-3 line-clamp-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{entry.summary || entry.content.replace(/[#*_`>-]/g, "")}</p>}
       <div className="mt-4 flex flex-wrap items-center gap-2">
         {entry.tags.slice(0, 5).map((tag) => (
           <span key={tag} className="rounded-full bg-slate-200/80 px-2.5 py-1 text-xs font-medium text-slate-700 dark:bg-white/10 dark:text-slate-200">

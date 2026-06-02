@@ -28,6 +28,7 @@ export function EntryForm({
   const [hours, setHours] = useState(String(Math.floor((initial?.duration_minutes ?? 45) / 60)));
   const [minutes, setMinutes] = useState(String((initial?.duration_minutes ?? 45) % 60));
   const [sourceUrl, setSourceUrl] = useState(initial?.source_url ?? "");
+  const [learnedAt, setLearnedAt] = useState(() => (initial?.created_at ? initial.created_at.slice(0, 10) : new Date().toISOString().slice(0, 10)));
   const [draft, setDraft] = useState(false);
   const [error, setError] = useState("");
 
@@ -43,11 +44,13 @@ export function EntryForm({
     if (!selectedCategory) return setError(t("titleRequired"));
     onSubmit({
       title: draft ? `[Draft] ${title.trim().replace(/^\[Draft\]\s*/, "")}` : title.trim().replace(/^\[Draft\]\s*/, ""),
+      summary: initial?.summary ?? "",
       content: content.trim() || t("draftEntry"),
       category: selectedCategory,
       tags: tagText.split(",").map((tag) => tag.trim()).filter(Boolean),
       duration_minutes: Number.isFinite(duration) ? duration : 0,
-      source_url: sourceUrl.trim()
+      source_url: sourceUrl.trim(),
+      learned_at: learnedAt
     });
   }
 
@@ -65,6 +68,10 @@ export function EntryForm({
       </section>
       <aside className="glass h-fit rounded-xl p-5">
         <div className="space-y-4">
+          <div>
+            <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">{t("learnedDate")}</label>
+            <Input className="mt-2" type="date" value={learnedAt} onChange={(event) => setLearnedAt(event.target.value)} />
+          </div>
           <div>
             <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">{t("category")}</label>
             <Select className="mt-2" value={category} onChange={(event) => setCategory(event.target.value)}>
