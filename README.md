@@ -1,8 +1,8 @@
 # Learning Journal
 
-English | [简体中文](./README.zh-CN.md)
+简体中文 | [English](./README.en.md)
 
-> A local-first learning task board and daily learning journal. Plan what you want to learn, complete it, then turn it into searchable notes with time tracking, tags, categories, heatmaps, and stats.
+> 一个本地优先的学习待办与学习日志应用。先计划你要学什么，完成后再填写笔记、用时和来源链接，最终沉淀为可搜索、可统计、可回顾的学习记录。
 
 ![React](https://img.shields.io/badge/React-18-61dafb?logo=react&logoColor=111)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=fff)
@@ -11,151 +11,157 @@ English | [简体中文](./README.zh-CN.md)
 ![Express](https://img.shields.io/badge/Express-API-111827?logo=express&logoColor=fff)
 ![SQLite](https://img.shields.io/badge/SQLite-local-003b57?logo=sqlite&logoColor=fff)
 
-## Why
+## 为什么做这个项目
 
-Most learning trackers ask you to write what you already learned. In real life, learning usually starts as a plan:
+很多学习记录工具都是“事后记录”：今天学了什么、学了多久、记了什么笔记。
 
-1. I want to learn something.
-2. I finish it later.
-3. I record what I actually learned, how long it took, and where the source was.
+但真实的学习流程通常是：
 
-Learning Journal follows that workflow. It helps you turn learning intentions into completed notes, searchable history, and visible progress.
+1. 我先有一个想学或必须完成的内容。
+2. 之后我去学习和完成它。
+3. 完成后再记录实际学到的东西、学习时长和资料来源。
 
-## Features
+Learning Journal 按照这个流程设计，帮助你把学习计划变成学习记录，把零散学习变成可回顾的成长轨迹。
 
-- **Learning Tasks**  
-  Add what you plan to learn with category and tags. When done, complete it with notes, duration, and source URL.
+## 功能特性
 
-- **Journal Entries**  
-  Completed tasks become searchable learning entries with markdown notes.
+- **学习待办**  
+  先写下你准备学什么，只需要选择分类和标签。完成后再补充笔记、用时和来源链接。
 
-- **Dashboard**  
-  Weekly/monthly/all-time learning stats, streak counter, recent entries, tag cloud, category chart, and heatmap.
+- **学习记录**  
+  完成待办后会自动生成正式学习记录，支持 Markdown 笔记。
 
-- **Interactive Heatmap**  
-  Hover a day to see the date, total minutes, and what you learned that day.
+- **每日小结**  
+  可以为任意日期写独立小结，不再混在待办或学习记录里。
 
-- **Timeline**  
-  Browse learning entries grouped by date.
+- **仪表盘**  
+  展示本周、本月、总学习时长，当前连续学习天数，最近记录，标签云，分类图表和学习热力图。
 
-- **Search**  
-  Search by keyword, category, tag, and date range.
+- **按月学习热力图**  
+  默认显示当前月份，也可以切换到之前或之后的月份。鼠标悬停可以看到当天学了什么。
 
-- **Category & Tag Management**  
-  Create, rename, delete categories and tags. Categories support custom colors.
+- **时间线**  
+  按日期分组浏览所有学习记录。
 
-- **Local-first**  
-  Runs on your own machine. No cloud, no login, no tracking.
+- **搜索与筛选**  
+  支持关键词、分类、标签和日期范围筛选。
 
-- **Dark Mode**  
-  System-aware theme with manual toggle.
+- **分类与标签管理**  
+  支持新增、重命名、删除分类和标签。分类支持自定义颜色。
 
-- **Language Switcher**  
-  Built-in Chinese and English UI.
+- **本地优先**  
+  所有数据都保存在你自己的电脑里，不依赖云服务，不需要登录账号。
 
-- **One-click Start**  
-  Windows `.vbs` scripts can start and stop the dev server silently.
+- **深色模式**  
+  支持跟随系统主题，也可以手动切换。
 
-## Tech Stack
+- **中英文界面**  
+  应用内置中英文切换。
 
-- Frontend: React 18, Vite, TypeScript, Tailwind CSS
-- Backend: Node.js, Express, TypeScript
-- Database: SQLite via `better-sqlite3`
-- State/data: TanStack Query
-- UI: custom shadcn-style components, Lucide icons, Recharts, Framer Motion
+- **一键启动**  
+  Windows 下提供静默启动和停止脚本。
 
-## Quick Start
+## 技术栈
+
+- 前端：React 18、Vite、TypeScript、Tailwind CSS
+- 后端：Node.js、Express、TypeScript
+- 数据库：SQLite、better-sqlite3
+- 数据请求与缓存：TanStack Query
+- UI：shadcn 风格组件、Lucide icons、Recharts、Framer Motion
+
+## 快速开始
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open:
+打开：
 
-- Client: http://localhost:5173
-- API: http://localhost:3001
+- 前端：http://localhost:5173
+- 后端 API：http://localhost:3001
 
-The SQLite database is created automatically at:
+SQLite 数据库会自动创建在：
 
 ```text
 server/data/learning-journal.sqlite
 ```
 
-## Windows One-click Launch
+## Windows 一键启动
 
-From the project parent folder:
+在项目上级目录可以使用：
 
 ```text
 Start Learning Journal Silent.vbs
 Stop Learning Journal Silent.vbs
 ```
 
-Inside the project folder:
+在项目目录内可以使用：
 
 ```text
 start-learning-journal-silent.vbs
 stop-learning-journal-silent.vbs
 ```
 
-The silent start script runs `npm run dev` in the background and opens:
+静默启动脚本会在后台运行 `npm run dev`，然后自动打开：
 
 ```text
 http://127.0.0.1:5173/
 ```
 
-## Workflow
+## 使用流程
 
 ```mermaid
 flowchart LR
-  A["Add learning task"] --> B["Complete task"]
-  B --> C["Write notes, duration, source"]
-  C --> D["Create journal entry"]
-  D --> E["Stats, timeline, search, heatmap"]
+  A["添加学习待办"] --> B["完成待办"]
+  B --> C["填写笔记、用时、来源"]
+  C --> D["生成学习记录"]
+  D --> E["统计、时间线、搜索、热力图"]
 ```
 
-## Scripts
+## 常用脚本
 
 ```bash
-npm run dev        # Start client and server
-npm run build      # Build server and client
-npm run typecheck  # Run TypeScript checks
-npm run start      # Start built server
+npm run dev        # 启动前端和后端
+npm run build      # 构建前端和后端
+npm run typecheck  # TypeScript 类型检查
+npm run start      # 启动构建后的服务
 ```
 
-## Project Structure
+## 项目结构
 
 ```text
 learning-journal/
-├── client/                 # React + Vite frontend
-├── server/                 # Express + SQLite backend
-│   └── data/               # Local SQLite database, ignored by git
-├── package.json            # Workspace scripts
+├── client/                 # React + Vite 前端
+├── server/                 # Express + SQLite 后端
+│   └── data/               # 本地 SQLite 数据库，已被 git 忽略
+├── package.json            # 工作区脚本
 └── README.md
 ```
 
-## Database Tables
+## 数据库表
 
-- `tasks` - learning todos before they become records
-- `entries` - completed learning journal entries
-- `categories` - category names and colors
-- `tags` - reusable tag names
+- `tasks`：学习待办，完成后可转为正式记录
+- `entries`：正式学习记录
+- `daily_summaries`：每日小结
+- `categories`：分类名称和颜色
+- `tags`：可复用标签
 
 ## API
 
-All responses use a consistent shape:
+所有接口响应都使用统一格式：
 
 ```json
 { "success": true, "data": {} }
 ```
 
-or:
+或者：
 
 ```json
 { "success": false, "error": "Message" }
 ```
 
-### Entries
+### 学习记录
 
 - `GET /api/entries`
 - `GET /api/entries/:id`
@@ -164,7 +170,7 @@ or:
 - `DELETE /api/entries/:id`
 - `GET /api/entries/dates`
 
-### Tasks
+### 学习待办
 
 - `GET /api/tasks`
 - `POST /api/tasks`
@@ -173,43 +179,51 @@ or:
 - `POST /api/tasks/:id/complete`
 - `DELETE /api/tasks/:id`
 
-### Stats
+### 每日小结
+
+- `GET /api/daily-summaries`
+- `GET /api/daily-summaries/:date`
+- `PUT /api/daily-summaries/:date`
+- `DELETE /api/daily-summaries/:date`
+
+### 统计
 
 - `GET /api/stats`
+- `GET /api/stats?month=2026-06`
 
-### Categories
+### 分类
 
 - `GET /api/categories`
 - `POST /api/categories`
 - `PUT /api/categories/:name`
 - `DELETE /api/categories/:name`
 
-### Tags
+### 标签
 
 - `GET /api/tags`
 - `POST /api/tags`
 - `PUT /api/tags/:name`
 - `DELETE /api/tags/:name`
 
-## Privacy
+## 隐私说明
 
-This app is designed for personal use:
+这个应用面向个人本地使用：
 
-- No cloud dependency
-- No account system
-- No telemetry
-- SQLite database stays local
-- `server/data/*.sqlite` is ignored by git
+- 不依赖云服务
+- 不需要账号系统
+- 没有埋点或遥测
+- SQLite 数据库只保存在本地
+- `server/data/*.sqlite` 已加入 `.gitignore`
 
-## Roadmap
+## 路线图
 
-- Export entries to Markdown
-- Import/export backup file
-- Calendar view
-- Pomodoro-style timer for active learning tasks
-- GitHub-style yearly heatmap
-- More chart filters
+- 导出学习记录为 Markdown
+- 备份文件导入/导出
+- 日历视图
+- 学习任务番茄钟
+- 年度 GitHub 风格热力图
+- 更多统计筛选条件
 
-## License
+## 许可证
 
 MIT
